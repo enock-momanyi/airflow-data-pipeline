@@ -1,8 +1,7 @@
 class SqlQueries:
     songplay_table = {
-        "delete-create": ("""
-                DROP table IF EXISTS songplays;
-                CREATE TABLE songplays (
+        "create": ("""
+                CREATE TABLE IF NOT EXISTS songplays (
                     playid varchar(32) NOT NULL,
                     start_time timestamp NOT NULL,
                     userid int4 NOT NULL,
@@ -14,6 +13,9 @@ class SqlQueries:
                     user_agent varchar(256),
                     CONSTRAINT songplays_pkey PRIMARY KEY (playid)
                 );
+        """),
+        "truncate":("""
+            TRUNCATE TABLE songplays;
         """),
         "insert": ("""
                 INSERT INTO songplays (playid, start_time, userid, level, songid, artistid, sessionid, location, user_agent)
@@ -37,9 +39,8 @@ class SqlQueries:
         """)
     }
     user_table = {
-        "delete-create": ("""
-            DROP table IF EXISTS users;
-            CREATE TABLE users (
+        "create": ("""
+            CREATE TABLE IF NOT EXISTS users (
                 userid int4 NOT NULL,
                 first_name varchar(256),
                 last_name varchar(256),
@@ -48,6 +49,10 @@ class SqlQueries:
                 CONSTRAINT users_pkey PRIMARY KEY (userid)
             );
         """),
+        "truncate":("""
+            TRUNCATE TABLE users;
+        """
+        ),
         "insert": ("""
             INSERT INTO users (userid, first_name, last_name, gender, level)
             SELECT distinct userid, firstname, lastname, gender, level
@@ -57,9 +62,8 @@ class SqlQueries:
     }
 
     song_table = {
-        "delete-create": ("""
-            DROP table IF EXISTS songs;
-            CREATE TABLE songs (
+        "create": ("""
+            CREATE TABLE IF NOT EXISTS songs (
                 songid varchar(256) NOT NULL,
                 title varchar(512),
                 artistid varchar(256),
@@ -68,6 +72,9 @@ class SqlQueries:
                 CONSTRAINT songs_pkey PRIMARY KEY (songid)
             );
         """),
+        "truncate":("""
+            TRUNCATE TABLE songs;
+        """),
         "insert": ("""
             INSERT INTO songs (songid, title, artistid, year, duration)
             SELECT distinct song_id, title, artist_id, year, duration
@@ -75,15 +82,17 @@ class SqlQueries:
         """)
     }
     artist_table = {
-        "delete-create": ("""
-            DROP table IF EXISTS artists;
-            CREATE TABLE artists (
+        "create": ("""
+            CREATE TABLE IF NOT EXISTS artists (
                 artistid varchar(256) NOT NULL,
                 name varchar(512),
                 location varchar(512),
                 latitude numeric(18,0),
                 longitude numeric(18,0)
             );
+        """),
+        "truncate":("""
+            TRUNCATE TABLE artists;
         """),
         "insert": ("""
             INSERT INTO artists (artistid, name, location, latitude, longitude)
@@ -92,9 +101,8 @@ class SqlQueries:
         """)
     }
     time_table = {
-        "delete-create": ("""
-            DROP table IF EXISTS "time";
-            CREATE TABLE "time" (
+        "create": ("""
+            CREATE TABLE IF NOT EXISTS "time" (
                 start_time timestamp NOT NULL,
                 "hour" int4,
                 "day" int4,
@@ -104,6 +112,9 @@ class SqlQueries:
                 weekday varchar(256),
                 CONSTRAINT time_pkey PRIMARY KEY (start_time)
             ) ;
+        """),
+        "truncate":("""
+            TRUNCATE TABLE "time";
         """),
         "insert": ("""
             INSERT INTO time (start_time, hour, day, week, month, year, weekday)
@@ -115,8 +126,7 @@ class SqlQueries:
 
 
     stage_songs_create = ("""
-                           DROP table IF EXISTS staging_songs;
-                           CREATE TABLE staging_songs (
+                           CREATE TABLE IF NOT EXISTS staging_songs (
                                 num_songs int4,
                                 artist_id varchar(256),
                                 artist_name varchar(512),
@@ -131,8 +141,7 @@ class SqlQueries:
 
                            """)
     stage_events_create = ("""
-                           DROP table IF EXISTS staging_events;
-                           CREATE TABLE staging_events (
+                           CREATE TABLE IF NOT EXISTS staging_events (
                                 artist varchar(256),
                                 auth varchar(256),
                                 firstname varchar(256),
@@ -155,6 +164,7 @@ class SqlQueries:
                            """)
     stage_sql = """
                 {create_stmt}
+                TRUNCATE TABLE {table};
                 COPY {table}
                 FROM '{bucket}'
                 ACCESS_KEY_ID '{{access}}'

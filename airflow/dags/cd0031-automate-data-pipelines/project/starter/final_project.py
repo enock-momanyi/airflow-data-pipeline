@@ -49,33 +49,33 @@ def final_project():
     )
     # modes:
     #       append-only --> "append-only"
-    #       delete-load --> "delete-load"
+    #       truncate-load --> "truncate-load"
     load_user_dimension_table = LoadDimensionOperator(
         task_id='Load_user_dim_table',
         redshift_conn_id="redshift",
         sql = SqlQueries.user_table,
-        mode = "delete-load"
+        mode = "truncate-load"
     )
 
     load_song_dimension_table = LoadDimensionOperator(
         task_id='Load_song_dim_table',
         redshift_conn_id="redshift",
         sql = SqlQueries.song_table,
-        mode = "delete-load"
+        mode = "truncate-load"
     )
 
     load_artist_dimension_table = LoadDimensionOperator(
         task_id='Load_artist_dim_table',
         redshift_conn_id="redshift",
         sql = SqlQueries.artist_table,
-        mode = "delete-load"
+        mode = "truncate-load"
     )
 
     load_time_dimension_table = LoadDimensionOperator(
         task_id='Load_time_dim_table',
         redshift_conn_id="redshift",
         sql = SqlQueries.time_table,
-        mode = "delete-load"
+        mode = "truncate-load"
     )
 
     run_quality_checks = DataQualityOperator(

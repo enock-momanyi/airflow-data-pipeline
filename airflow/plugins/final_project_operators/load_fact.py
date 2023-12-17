@@ -19,6 +19,8 @@ class LoadFactOperator(BaseOperator):
 
     def execute(self, context):
         redshift_hook = PostgresHook(f"{self.redshift_conn_id}")
-        redshift_hook.run(self.sql["delete-create"])
+        #creates if not exists
+        redshift_hook.run(self.sql["create"])
+        redshift_hook.run(self.sql["truncate"])
         redshift_hook.run(self.sql["insert"])
         logging.info("Fact data loaded")
